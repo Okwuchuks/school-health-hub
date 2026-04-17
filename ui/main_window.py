@@ -5,6 +5,7 @@ Author: Ifende Daniel
 """
 
 from PySide6.QtWidgets import QStackedWidget, QMainWindow
+from ui.login_screen import LoginScreen
 
 
 # -----THE MAIN WINDOW CLASS..
@@ -25,4 +26,8 @@ class MainWindow(QMainWindow):
         # Screens will be added here as the app grows
         self.container = QStackedWidget()
 
+        self.login_screen = LoginScreen()
+        self.container.addWidget(self.login_screen)
+
+        self.container.setCurrentIndex(0)
         self.setCentralWidget(self.container)
