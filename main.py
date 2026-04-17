@@ -9,6 +9,7 @@ from PySide6.QtWidgets import QApplication
 from ui.main_window import MainWindow
 
 
+# -----THE FUNCTION WHICH EXECUTES THE MAIN WINDOW..
 def main():
     app = QApplication(sys.argv)
     window = MainWindow()
