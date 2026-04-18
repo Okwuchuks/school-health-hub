@@ -34,7 +34,6 @@ class DatabaseManager:
     def get_pending_users(self, status):
         self.cursor.execute("SELECT * FROM users WHERE status = ?", (status,))
         return self.cursor.fetchall()
-        
 
     def update_user_status(self, status, user_id):
         self.cursor.execute(
