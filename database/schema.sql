@@ -1,8 +1,7 @@
-"""
-School Health Hub (SHH)
-The blueprint for the tables.
-Author: Ifende Daniel
-"""
+--School Health Hub (SHH)
+--The blueprint for the tables.
+--Author: Ifende Daniel
+
 
 CREATE TABLE IF NOT EXISTS students (
     student_id  INTEGER  PRIMARY KEY,

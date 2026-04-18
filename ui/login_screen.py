@@ -13,12 +13,14 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QFormLayout,
 )
+from security.auth import verify_login
 
 
 # -----LOGIN SCREEN VIEW...
 class LoginScreen(QWidget):
-    def __init__(self):
+    def __init__(self, db_manager):
         super().__init__()
+        self.db_manager = db_manager
         self._init_ui()
 
     def _init_ui(self):
@@ -37,6 +39,7 @@ class LoginScreen(QWidget):
         input_field.addRow("Password:", self.password_input)
 
         login_button = QPushButton("Login")
+        login_button.clicked.connect(self._handle_login)
 
         layout = QVBoxLayout()
 
@@ -46,4 +49,15 @@ class LoginScreen(QWidget):
 
         self.setLayout(layout)
 
-        # the logic of adding a first user will come here later
+    def _handle_login(self):
+        username = self.username_input.text()
+        password = self.password_input.text()
+
+        if not username or not password:
+            QMessageBox.warning(self, "Error", "Please fill in all fields")
+            return
+
+        if verify_login(self.db_manager, username, password):
+            pass
+        else:
+            QMessageBox.warning(self, "Login Failed", "Invalid username or password")
