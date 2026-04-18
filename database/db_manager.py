@@ -1,0 +1,43 @@
+"""
+School Health Hub (SHH)
+This is the flexible database manager which handles connections, queries and CRUD methods.
+Author: Ifende Daniel
+"""
+
+import sqlite3
+
+
+class DatabaseManager:
+    def __init__(self, db_path):
+        self.connection = sqlite3.connect(db_path)
+        self.cursor = self.connection.cursor()
+        self._initialize_db()
+
+    def _initialize_db(self):
+        with open("database/schema.sql") as f:
+            instruction = f.read()
+
+        self.cursor.executescript(instruction)
+
+    def create_user(self, username, password_hash, user_type):
+        self.cursor.execute(
+            "INSERT INTO users (username, password_hash, user_type) VALUES (?, ?, ?)",
+            (username, password_hash, user_type),
+        )
+
+        self.connection.commit()
+
+    def get_user_by_username(self, username):
+        self.cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
+        return self.cursor.fetchone()
+
+    def get_pending_users(self, status):
+        self.cursor.execute("SELECT * FROM users WHERE status = ?", (status,))
+        return self.cursor.fetchall()
+        
+
+    def update_user_status(self, status, user_id):
+        self.cursor.execute(
+            "UPDATE users SET status = ? WHERE user_id = ?", (status, user_id)
+        )
+        self.connection.commit()
