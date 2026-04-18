@@ -40,3 +40,7 @@ class DatabaseManager:
             "UPDATE users SET status = ? WHERE user_id = ?", (status, user_id)
         )
         self.connection.commit()
+
+    def get_all_users(self):
+        self.cursor.execute("SELECT * FROM users")
+        return self.cursor.fetchall()
