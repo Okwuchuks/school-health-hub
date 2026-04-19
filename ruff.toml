@@ -1,0 +1,9 @@
+line-length = 79
+indent-width = 4
+
+[lint]
+select = ["E", "F", "W", "I"]
+ignore = ["F401"]
+
+[lint.isort]
+known-first-party = ["ui", "database", "security", "logic"]
