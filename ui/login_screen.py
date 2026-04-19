@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
     QFormLayout,
     QRadioButton,
     QHBoxLayout,
+    QButtonGroup,
 )
 from security.auth import verify_login, is_first_run, register_user
 
@@ -86,6 +87,10 @@ class LoginScreen(QWidget):
         self.male_input = QRadioButton("Male")
         self.female_input = QRadioButton("Female")
 
+        self.gender_group = QButtonGroup()
+        self.gender_group.addButton(self.male_input)
+        self.gender_group.addButton(self.female_input)
+
         gender_field.addWidget(gender_label)
         gender_field.addWidget(self.male_input)
         gender_field.addWidget(self.female_input)
@@ -108,6 +113,16 @@ class LoginScreen(QWidget):
         row_2 = QHBoxLayout()
         for widget in [self.O_neg, self.O_pos, self.AB_neg, self.AB_pos]:
             row_2.addWidget(widget)
+
+        self.blood_group_buttons = QButtonGroup()
+        self.blood_group_buttons.addButton(self.A_pos)
+        self.blood_group_buttons.addButton(self.A_neg)
+        self.blood_group_buttons.addButton(self.B_pos)
+        self.blood_group_buttons.addButton(self.B_neg)
+        self.blood_group_buttons.addButton(self.O_pos)
+        self.blood_group_buttons.addButton(self.O_neg)
+        self.blood_group_buttons.addButton(self.AB_pos)
+        self.blood_group_buttons.addButton(self.AB_neg)
 
         register_button = QPushButton("Register")
         register_button.clicked.connect(self._handle_register)
@@ -137,3 +152,68 @@ class LoginScreen(QWidget):
             QMessageBox.warning(
                 self, "Login Failed", "Invalid username or password"
             )
+
+    def _clear_layout(self):
+        if self.layout():
+            while self.layout().count():
+                item = self.layout().takeAt(0)
+                if item.widget():
+                    item.widget().deleteLater()
+        QWidget().setLayout(self.layout())
+
+    def _handle_register(self):
+        username = self.username_input.text()
+        fullname = self.full_name_input.text()
+        password = self.password_input.text()
+        phone_no = self.phone_input.text()
+
+        if self.male_input.isChecked():
+            gender = "Male"
+        else:
+            gender = "Female"
+
+        if self.A_neg.isChecked():
+            b_group = "A-"
+        elif self.A_pos.isChecked():
+            b_group = "A+"
+        elif self.AB_neg.isChecked():
+            b_group = "AB-"
+        elif self.AB_pos.isChecked():
+            b_group = "AB+"
+        elif self.B_neg.isChecked():
+            b_group = "B-"
+        elif self.B_pos.isChecked():
+            b_group = "B+"
+        elif self.O_neg.isChecked():
+            b_group = "O-"
+        else:
+            b_group = "O+"
+
+        if (
+            not username
+            or not fullname
+            or not password
+            or not phone_no
+            or not gender
+            or not b_group
+        ):
+            QMessageBox.warning(self, "Error", "Please fill in all fields")
+            return
+
+        register_user(
+            self.db_manager,
+            username,
+            password,
+            "admin",
+            fullname,
+            phone_no,
+            gender,
+            b_group,
+        )
+
+        QMessageBox.information(
+            self, "Success", "Admin account successfully created"
+        )
+
+        self._clear_layout()
+

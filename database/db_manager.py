@@ -19,16 +19,36 @@ class DatabaseManager:
 
         self.cursor.executescript(instruction)
 
-    def create_user(self, username, password_hash, user_type):
+    def create_user(
+        self,
+        username,
+        password_hash,
+        user_type,
+        fullname,
+        phone,
+        gender,
+        blood_group,
+    ):
+
         self.cursor.execute(
-            "INSERT INTO users (username, password_hash, user_type) VALUES (?, ?, ?)",
-            (username, password_hash, user_type),
+            "INSERT INTO users (username, password_hash, user_type, full_name, phone, gender, blood_group) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (
+                username,
+                password_hash,
+                user_type,
+                fullname,
+                phone,
+                gender,
+                blood_group,
+            ),
         )
 
         self.connection.commit()
 
     def get_user_by_username(self, username):
-        self.cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
+        self.cursor.execute(
+            "SELECT * FROM users WHERE username = ?", (username,)
+        )
         return self.cursor.fetchone()
 
     def get_pending_users(self, status):

@@ -16,9 +16,22 @@ def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 
-def register_user(db_manager, username, password, user_type):
+def register_user(
+    db_manager,
+    username,
+    password,
+    user_type,
+    fullname,
+    phone,
+    gender,
+    blood_group,
+):
+
     p_hash = hash_password(password)
-    db_manager.create_user(username, p_hash, user_type)
+
+    db_manager.create_user(
+        username, p_hash, user_type, fullname, phone, gender, blood_group
+    )
 
 
 def verify_login(db_manager, username, password):
