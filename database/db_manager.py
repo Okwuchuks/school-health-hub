@@ -51,16 +51,6 @@ class DatabaseManager:
         )
         return self.cursor.fetchone()
 
-    def get_pending_users(self, status):
-        self.cursor.execute("SELECT * FROM users WHERE status = ?", (status,))
-        return self.cursor.fetchall()
-
-    def update_user_status(self, status, user_id):
-        self.cursor.execute(
-            "UPDATE users SET status = ? WHERE user_id = ?", (status, user_id)
-        )
-        self.connection.commit()
-
     def get_all_users(self):
         self.cursor.execute("SELECT * FROM users")
         return self.cursor.fetchall()
