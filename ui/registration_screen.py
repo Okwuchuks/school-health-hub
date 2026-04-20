@@ -1,10 +1,42 @@
-    def _build_register_form(self):
+"""
+School Health Hub (SHH)
+The registration window
+Author: Ifende Daniel
+"""
+
+from PySide6.QtWidgets import (
+    QWidget,
+    QVBoxLayout,
+    QPushButton,
+    QLabel,
+    QMessageBox,
+    QLineEdit,
+    QFormLayout,
+)
+from PySide6.QtCore import Signal
+from security.auth import register_user
+
+
+class RegistrationScreen(QWidget):
+    registration_success = Signal()
+
+    def __init__(self, db_manager, user_type):
+        super().__init__()
+        self.db_manager = db_manager
+        self.user_type = user_type
+        self._init_ui()
+
+    def _init_ui(self):
         title_label = QLabel("School Health Hub - Register")
 
         input_field = QFormLayout()
 
-        self.full_name_input = QLineEdit()
-        self.full_name_input.setPlaceholderText("Insert your fullname here...")
+        self.first_name_input = QLineEdit()
+        self.first_name_input.setPlaceholderText(
+            "Insert your firstname here..."
+        )
+        self.last_name_input = QLineEdit()
+        self.last_name_input.setPlaceholderText("Insert your lastname here...")
 
         self.username_input = QLineEdit()
         self.username_input.setPlaceholderText("Insert your username here...")
@@ -16,53 +48,11 @@
         self.phone_input = QLineEdit()
         self.phone_input.setPlaceholderText("Insert your phone number here...")
 
-        input_field.addRow("Full name:", self.full_name_input)
+        input_field.addRow("First name:", self.first_name_input)
+        input_field.addRow("Last name:", self.last_name_input)
         input_field.addRow("Username:", self.username_input)
         input_field.addRow("Password:", self.password_input)
         input_field.addRow("Phone no.:", self.phone_input)
-
-        gender_field = QHBoxLayout()
-        gender_label = QLabel("Gender:")
-
-        self.male_input = QRadioButton("Male")
-        self.female_input = QRadioButton("Female")
-
-        self.gender_group = QButtonGroup()
-        self.gender_group.addButton(self.male_input)
-        self.gender_group.addButton(self.female_input)
-
-        gender_field.addWidget(gender_label)
-        gender_field.addWidget(self.male_input)
-        gender_field.addWidget(self.female_input)
-
-        blood_group_label = QLabel("Blood Group:")
-
-        self.A_pos = QRadioButton("A+")
-        self.A_neg = QRadioButton("A-")
-        self.B_pos = QRadioButton("B+")
-        self.B_neg = QRadioButton("B-")
-        self.O_pos = QRadioButton("O+")
-        self.O_neg = QRadioButton("O-")
-        self.AB_pos = QRadioButton("AB+")
-        self.AB_neg = QRadioButton("AB-")
-
-        row_1 = QHBoxLayout()
-        for widget in [self.A_neg, self.A_pos, self.B_neg, self.B_pos]:
-            row_1.addWidget(widget)
-
-        row_2 = QHBoxLayout()
-        for widget in [self.O_neg, self.O_pos, self.AB_neg, self.AB_pos]:
-            row_2.addWidget(widget)
-
-        self.blood_group_buttons = QButtonGroup()
-        self.blood_group_buttons.addButton(self.A_pos)
-        self.blood_group_buttons.addButton(self.A_neg)
-        self.blood_group_buttons.addButton(self.B_pos)
-        self.blood_group_buttons.addButton(self.B_neg)
-        self.blood_group_buttons.addButton(self.O_pos)
-        self.blood_group_buttons.addButton(self.O_neg)
-        self.blood_group_buttons.addButton(self.AB_pos)
-        self.blood_group_buttons.addButton(self.AB_neg)
 
         register_button = QPushButton("Register")
         register_button.clicked.connect(self._handle_register)
@@ -70,49 +60,23 @@
         layout = QVBoxLayout()
         layout.addWidget(title_label)
         layout.addLayout(input_field)
-        layout.addLayout(gender_field)
-        layout.addWidget(blood_group_label)
-        layout.addLayout(row_1)
-        layout.addLayout(row_2)
         layout.addWidget(register_button)
 
         self.setLayout(layout)
 
     def _handle_register(self):
         username = self.username_input.text()
-        fullname = self.full_name_input.text()
+        firstname = self.first_name_input.text()
+        lastname = self.last_name_input.text()
         password = self.password_input.text()
         phone_no = self.phone_input.text()
 
-        if self.male_input.isChecked():
-            gender = "Male"
-        else:
-            gender = "Female"
-
-        if self.A_neg.isChecked():
-            b_group = "A-"
-        elif self.A_pos.isChecked():
-            b_group = "A+"
-        elif self.AB_neg.isChecked():
-            b_group = "AB-"
-        elif self.AB_pos.isChecked():
-            b_group = "AB+"
-        elif self.B_neg.isChecked():
-            b_group = "B-"
-        elif self.B_pos.isChecked():
-            b_group = "B+"
-        elif self.O_neg.isChecked():
-            b_group = "O-"
-        else:
-            b_group = "O+"
-
         if (
             not username
-            or not fullname
+            or not firstname
+            or not lastname
             or not password
             or not phone_no
-            or not gender
-            or not b_group
         ):
             QMessageBox.warning(self, "Error", "Please fill in all fields")
             return
@@ -121,15 +85,13 @@
             self.db_manager,
             username,
             password,
-            "admin",
-            fullname,
+            self.user_type,
+            firstname,
+            lastname,
             phone_no,
-            gender,
-            b_group,
         )
 
         QMessageBox.information(
-            self, "Success", "Admin account successfully created"
+            self, "Success", "Account successfully created"
         )
-
-        self._clear_layout()
+        self.registration_success.emit()
