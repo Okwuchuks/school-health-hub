@@ -24,22 +24,20 @@ class DatabaseManager:
         username,
         password_hash,
         user_type,
-        fullname,
+        first_name,
+        last_name,
         phone,
-        gender,
-        blood_group,
     ):
 
         self.cursor.execute(
-            "INSERT INTO users (username, password_hash, user_type, full_name, phone, gender, blood_group) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO users (username, password_hash, user_type, first_name, last_name, phone, created_at, is_active) VALUES (?, ?, ?, ?, ?, ?)",
             (
                 username,
                 password_hash,
                 user_type,
-                fullname,
+                first_name,
+                last_name,
                 phone,
-                gender,
-                blood_group,
             ),
         )
 
