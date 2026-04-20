@@ -38,11 +38,9 @@ CREATE TABLE IF NOT EXISTS users(
     username  TEXT  NOT NULL  UNIQUE,
     password_hash  TEXT  NOT NULL,
     user_type  TEXT NOT NULL  DEFAULT  'user',
-    status  TEXT   NOT NULL  DEFAULT  'pending',
-    full_name  TEXT  NOT NULL,
+    first_name  TEXT  NOT NULL,
+    last_name  TEXT  NOT NULL,
     phone  TEXT  NOT NULL,
-    gender  TEXT  NOT NULL,
-    blood_group  TEXT NOT NULL,
     created_at  TEXT  NOT NULL  DEFAULT CURRENT_TIMESTAMP,
     is_active   BOOLEAN  NOT NULL  DEFAULT 1
 );
