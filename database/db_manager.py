@@ -30,7 +30,7 @@ class DatabaseManager:
     ):
 
         self.cursor.execute(
-            "INSERT INTO users (username, password_hash, user_type, first_name, last_name, phone, created_at, is_active) VALUES (?, ?, ?, ?, ?, ?)",
+            "INSERT INTO users (username, password_hash, user_type, first_name, last_name, phone) VALUES (?, ?, ?, ?, ?, ?)",
             (
                 username,
                 password_hash,
