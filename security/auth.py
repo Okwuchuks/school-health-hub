@@ -21,16 +21,15 @@ def register_user(
     username,
     password,
     user_type,
-    fullname,
+    first_name,
+    last_name,
     phone,
-    gender,
-    blood_group,
 ):
 
     p_hash = hash_password(password)
 
     db_manager.create_user(
-        username, p_hash, user_type, fullname, phone, gender, blood_group
+        username, p_hash, user_type, first_name, last_name, phone
     )
 
 
