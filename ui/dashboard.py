@@ -10,6 +10,9 @@ from PySide6.QtWidgets import (
     QPushButton,
     QLabel,
     QMessageBox,
+    QHBoxLayout,
+    QListWidget,
+    QStackedWidget,
 )
 from PySide6.QtCore import Signal
 
@@ -23,17 +26,26 @@ class DashBoard(QWidget):
         self._init_ui()
 
     def _init_ui(self):
-        title_label = QLabel("Welcome")
+        outer_region = QHBoxLayout()
 
-        logout_button = QPushButton("Logout")
-        logout_button.clicked.connect(self._handle_logout)
+        self.side_panel = QWidget()
 
-        layout = QVBoxLayout()
+        self.main_content_area = QWidget()
+        self.main_layout = QVBoxLayout()
+        self.main_content_area.setLayout(self.main_layout)
 
-        layout.addWidget(title_label)
-        layout.addWidget(logout_button)
+        self.upper_bar = QWidget()
+        self.upper_bar.setLayout(QHBoxLayout())
 
-        self.setLayout(layout)
+        self.content_area = QStackedWidget()
+
+        self.main_layout.addWidget(self.upper_bar)
+        self.main_layout.addWidget(self.content_area)
+
+        outer_region.addWidget(self.side_panel)
+        outer_region.addWidget(self.main_content_area)
+
+        self.setLayout(outer_region)
 
     def _handle_logout(self):
         QMessageBox.information(self, "Logged Out", "Successfully logged Out")
