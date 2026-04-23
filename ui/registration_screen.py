@@ -48,10 +48,14 @@ class RegistrationScreen(QWidget):
         self.phone_input = QLineEdit()
         self.phone_input.setPlaceholderText("Insert your phone number here...")
 
+        self.conf_password = QLineEdit()
+        self.conf_password.setPlaceholderText("Pls confirm your password...")
+
         input_field.addRow("First name:", self.first_name_input)
         input_field.addRow("Last name:", self.last_name_input)
         input_field.addRow("Username:", self.username_input)
         input_field.addRow("Password:", self.password_input)
+        input_field.addRow("Confirm Password", self.conf_password)
         input_field.addRow("Phone no.:", self.phone_input)
 
         register_button = QPushButton("Register")
@@ -69,6 +73,7 @@ class RegistrationScreen(QWidget):
         firstname = self.first_name_input.text()
         lastname = self.last_name_input.text()
         password = self.password_input.text()
+        password_conf = self.conf_password.text()
         phone_no = self.phone_input.text()
 
         if (
@@ -79,6 +84,14 @@ class RegistrationScreen(QWidget):
             or not phone_no
         ):
             QMessageBox.warning(self, "Error", "Please fill in all fields")
+            return
+
+        if password_conf != password:
+            QMessageBox.information(
+                self,
+                "Confirm Password",
+                "Please confirm your password correctly",
+            )
             return
 
         register_user(
