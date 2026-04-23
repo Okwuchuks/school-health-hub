@@ -50,6 +50,7 @@ class RegistrationScreen(QWidget):
 
         self.conf_password = QLineEdit()
         self.conf_password.setPlaceholderText("Pls confirm your password...")
+        self.conf_password.setEchoMode(QLineEdit.EchoMode.Password)
 
         input_field.addRow("First name:", self.first_name_input)
         input_field.addRow("Last name:", self.last_name_input)
