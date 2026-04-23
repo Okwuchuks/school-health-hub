@@ -64,6 +64,7 @@ class LoginScreen(QWidget):
 
         if not username or not password:
             QMessageBox.warning(self, "Error", "Please fill in all fields")
+            self.clear_input_fields()
             return
 
         if verify_login(self.db_manager, username, password):
