@@ -44,11 +44,39 @@ class DatabaseManager:
         self.connection.commit()
 
     def get_user_by_username(self, username):
-        self.cursor.execute(
-            "SELECT * FROM users WHERE username = ?", (username,)
-        )
+        self.cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
         return self.cursor.fetchone()
 
     def get_all_users(self):
         self.cursor.execute("SELECT * FROM users")
         return self.cursor.fetchall()
+
+    def create_student(
+        self,
+        first_name,
+        middle_name,
+        last_name,
+        date_of_birth,
+        enrollment_year,
+        blood_group,
+        gender,
+        hostel,
+        emergency_contact_name,
+        emergency_no,
+    ):
+        self.cursor.execute(
+            "INSERT INTO students (first_name, middle_name, last_name, date_of_birth, enrollment_year, blood_group, gender, hostel, emergency_contact_name, emergency_no) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                first_name,
+                middle_name,
+                last_name,
+                date_of_birth,
+                enrollment_year,
+                blood_group,
+                gender,
+                hostel,
+                emergency_contact_name,
+                emergency_no,
+            ),
+        )
+        self.connection.commit()

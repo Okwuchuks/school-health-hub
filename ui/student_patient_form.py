@@ -106,6 +106,18 @@ class PatientForm(QWidget):
 
         self.setLayout(main_layout)
 
+    def _clear_input_fields(self):
+        self.first_name.clear()
+        self.middle_name.clear()
+        self.last_name.clear()
+        self.birthday.setDate(self.birthday.minimumDate())
+        self.gender.setCurrentIndex(0)
+        self.enrollment_year.clear()
+        self.blood_group.setCurrentIndex(0)
+        self.hostel.setCurrentIndex(0)
+        self.emerg_cont_name.clear()
+        self.emerg_cont_num.clear()
+
     def _add_student(self):
         """
         [It adds a student to the database]
@@ -132,7 +144,21 @@ class PatientForm(QWidget):
                 empty_fields.append(name)
 
         if empty_fields:
-            QMessageBox.information(self, "Empty Input", "Please fill all required fields" )
+            QMessageBox.information(self, "Empty Input", "Please fill all required fields")
             return
         else:
-            pass
+            self.db_manager.create_student(
+                info["Firstname"],
+                middle_name,
+                info["Lastname"],
+                info["Birthday"],
+                info["Enrollment Year"],
+                info["Blood Group"],
+                info["Gender"],
+                info["Hostel"],
+                info["Emergency Contact Name"],
+                info["Emergency Contact"],
+            )
+            QMessageBox.information(self, "Success", "Successfully Added Student")
+
+            self._clear_input_fields()
