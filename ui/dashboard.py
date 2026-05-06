@@ -20,13 +20,19 @@ from PySide6.QtCore import Signal, Qt
 class DashBoard(QWidget):
     logout_requested = Signal()
 
-    def __init__(self, db_manager):
+    def __init__(self, db_manager, user_data: tuple):
         super().__init__()
         self.db_manager = db_manager
+        self.user_data = user_data
         self.is_panel_expanded = True
         self._init_ui()
 
     def _init_ui(self):
+        first_name = self.user_data[4]
+        last_name = self.user_data[5]
+        user_name = self.user_data[1]
+        user_type = self.user_data[3]
+
         outer_region = QHBoxLayout()
 
         self.side_panel = QWidget()
@@ -51,7 +57,7 @@ class DashBoard(QWidget):
         self.upper_bar_layout = QHBoxLayout()
         self.upper_bar.setLayout(self.upper_bar_layout)
 
-        self.avatar_label = QLabel("ID")
+        self.avatar_label = QLabel(f"{first_name[0]} {last_name[0]}")
 
         self.settings_combobox = QComboBox()
         self.settings_combobox.addItems(["Profile", "Settings", "Logout"])

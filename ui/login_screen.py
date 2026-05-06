@@ -19,7 +19,7 @@ from security.auth import verify_login
 
 # -----LOGIN SCREEN VIEW...
 class LoginScreen(QWidget):
-    login_success = Signal()
+    login_success = Signal(tuple)
 
     def __init__(self, db_manager):
         super().__init__()
@@ -67,8 +67,10 @@ class LoginScreen(QWidget):
             self.clear_input_fields()
             return
 
-        if verify_login(self.db_manager, username, password):
-            self.login_success.emit()
+        user_info = verify_login(self.db_manager, username, password)
+
+        if user_info:
+            self.login_success.emit(user_info)
         else:
             QMessageBox.warning(
                 self, "Login Failed", "Invalid username or password"

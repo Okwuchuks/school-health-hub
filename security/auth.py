@@ -41,4 +41,7 @@ def verify_login(db_manager, username, password):
 
     p_hash = hash_password(password)
 
-    return p_hash == _username[2]
+    if p_hash == _username[2]:
+        return _username
+    else:
+        return False

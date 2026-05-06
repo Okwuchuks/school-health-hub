@@ -28,26 +28,17 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.container)
 
         self.login_screen = LoginScreen(self.db_manager)
-        self.dashboard = DashBoard(self.db_manager)
 
         if self.is_first_run:
-            self.registration_screen = RegistrationScreen(
-                self.db_manager, "admin"
-            )
+            self.registration_screen = RegistrationScreen(self.db_manager, "admin")
         else:
-            self.registration_screen = RegistrationScreen(
-                self.db_manager, "user"
-            )
+            self.registration_screen = RegistrationScreen(self.db_manager, "user")
 
         self.container.addWidget(self.login_screen)
         self.container.addWidget(self.registration_screen)
-        self.container.addWidget(self.dashboard)
 
-        self.registration_screen.registration_success.connect(
-            self._switch_to_login
-        )
+        self.registration_screen.registration_success.connect(self._switch_to_login)
         self.login_screen.login_success.connect(self._switch_to_dashboard)
-        self.dashboard.logout_requested.connect(self._switch_to_login)
 
         if self.is_first_run:
             self.container.setCurrentWidget(self.registration_screen)
@@ -58,5 +49,12 @@ class MainWindow(QMainWindow):
         self.container.setCurrentWidget(self.login_screen)
         self.login_screen.clear_input_fields()
 
-    def _switch_to_dashboard(self):
+    def _switch_to_dashboard(self, data: tuple):
+        if hasattr(self, "dashboard"):
+            self.container.removeWidget(self.dashboard)
+
+        self.dashboard = DashBoard(self.db_manager, data)
+        self.container.addWidget(self.dashboard)
+        self.dashboard.logout_requested.connect(self._switch_to_login)
+
         self.container.setCurrentWidget(self.dashboard)
