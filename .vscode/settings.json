@@ -1,17 +1,10 @@
 {
-    "python-envs.defaultEnvManager": "ms-python.python:system",
+    "python-envs.defaultEnvManager": "ms-python.python:venv",
     "cSpell.words": [
         "emerg",
         "executescript",
         "Ifende",
         "Middlename",
         "setminimum"
-    ],
-    "python-envs.pythonProjects": [
-        {
-            "path": ".",
-            "envManager": "ms-python.python:system",
-            "packageManager": "ms-python.python:pip"
-        }
     ]
 }

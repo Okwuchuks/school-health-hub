@@ -39,15 +39,19 @@ class DashBoard(QWidget):
         self.side_panel_layout = QVBoxLayout()
         self.side_panel.setLayout(self.side_panel_layout)
 
+        self.home_button = QPushButton("🏠 Home")
         self.patients_button = QPushButton("❤️‍🩹 Patients")
-        self.records_button = QPushButton("🧾 Records")
+        self.staff_button = QPushButton("👥 Staff")
+        self.student_button = QPushButton("🎓 Students")
+        self.visits_button = QPushButton("🎫 Visits")
+        self.analytics_button = QPushButton("📊 Analytics")
 
-        self.side_panel_layout.addWidget(
-            self.patients_button, alignment=Qt.AlignmentFlag.AlignTop
-        )
-        self.side_panel_layout.addWidget(
-            self.records_button, alignment=Qt.AlignmentFlag.AlignTop
-        )
+        self.side_panel_layout.addWidget(self.home_button, alignment=Qt.AlignmentFlag.AlignTop)
+        self.side_panel_layout.addWidget(self.patients_button, alignment=Qt.AlignmentFlag.AlignTop)
+        self.side_panel_layout.addWidget(self.staff_button, alignment=Qt.AlignmentFlag.AlignTop)
+        self.side_panel_layout.addWidget(self.student_button, alignment=Qt.AlignmentFlag.AlignTop)
+        self.side_panel_layout.addWidget(self.visits_button, alignment=Qt.AlignmentFlag.AlignTop)
+        self.side_panel_layout.addWidget(self.analytics_button, alignment=Qt.AlignmentFlag.AlignTop)
 
         self.main_content_area = QWidget()
         self.main_layout = QVBoxLayout()
@@ -61,24 +65,16 @@ class DashBoard(QWidget):
 
         self.settings_combobox = QComboBox()
         self.settings_combobox.addItems(["Profile", "Settings", "Logout"])
-        self.settings_combobox.currentTextChanged.connect(
-            self._check_if_logout
-        )
+        self.settings_combobox.currentTextChanged.connect(self._check_if_logout)
 
         toggle_button = QPushButton("☰")
         toggle_button.clicked.connect(self._toggle_side_panel)
 
-        self.upper_bar_layout.addWidget(
-            toggle_button, alignment=Qt.AlignmentFlag.AlignLeft
-        )
+        self.upper_bar_layout.addWidget(toggle_button, alignment=Qt.AlignmentFlag.AlignLeft)
 
-        self.upper_bar_layout.addWidget(
-            self.avatar_label, alignment=Qt.AlignmentFlag.AlignRight
-        )
+        self.upper_bar_layout.addWidget(self.avatar_label, alignment=Qt.AlignmentFlag.AlignRight)
 
-        self.upper_bar_layout.addWidget(
-            self.settings_combobox, alignment=Qt.AlignmentFlag.AlignRight
-        )
+        self.upper_bar_layout.addWidget(self.settings_combobox, alignment=Qt.AlignmentFlag.AlignRight)
 
         self.content_area = QStackedWidget()
 
@@ -101,12 +97,19 @@ class DashBoard(QWidget):
     def _toggle_side_panel(self):
         if self.is_panel_expanded:
             self.side_panel.setFixedWidth(60)
+            self.home_button.setText("🏠")
             self.patients_button.setText("❤️‍🩹")
-            self.records_button.setText("🧾")
-
+            self.staff_button.setText("👥")
+            self.student_button.setText("🎓")
+            self.visits_button.setText("🎫")
+            self.analytics_button.setText("📊")
         else:
-            self.side_panel.setFixedWidth(200)
+            self.side_panel.setFixedWidth(160)
+            self.home_button.setText("🏠 Home")
             self.patients_button.setText("❤️‍🩹 Patients")
-            self.records_button.setText("🧾 Records")
+            self.staff_button.setText("👥 Staff")
+            self.student_button.setText("🎓 Students")
+            self.visits_button.setText("🎫 Visits")
+            self.analytics_button.setText("📊 Analytics")
 
         self.is_panel_expanded = not self.is_panel_expanded
