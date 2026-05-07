@@ -80,3 +80,13 @@ class DatabaseManager:
             ),
         )
         self.connection.commit()
+
+    def get_all_students(self):
+        self.cursor.execute(
+            "SELECT * FROM students",
+        )
+        return self.cursor.fetchall()
+
+    def get_student_by_name(self, student_name):
+        self.cursor.execute("SELECT * FROM students WHERE first_name = ?", (student_name,))
+        return self.cursor.fetchall()
