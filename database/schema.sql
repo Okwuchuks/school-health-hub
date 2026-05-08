@@ -3,56 +3,58 @@
 --Author: Ifende Daniel
 
 
+
+--Indicated tuple retrieval number adding a comment for easier work and flow
 CREATE TABLE IF NOT EXISTS students (
-    student_id  INTEGER  PRIMARY KEY,
-    first_name  TEXT  NOT NULL,
-    middle_name TEXT,
-    last_name  TEXT  NOT NULL,
-    date_of_birth  TEXT  NOT NULL,
-    enrollment_year  INTEGER NOT NULL,
-    blood_group  TEXT  NOT NULL,
-    gender  TEXT  NOT NULL,
-    hostel  TEXT  NOT NULL,
-    emergency_contact_name  TEXT NOT NULL,
-    emergency_no  TEXT NOT NULL,
-    is_active  BOOLEAN  NOT NULL DEFAULT 1
+    student_id  INTEGER  PRIMARY KEY, -- 0
+    first_name  TEXT  NOT NULL, -- 1
+    middle_name TEXT, -- 2
+    last_name  TEXT  NOT NULL, -- 3
+    date_of_birth  TEXT  NOT NULL, -- 4
+    enrollment_year  INTEGER NOT NULL, -- 5
+    blood_group  TEXT  NOT NULL, -- 6
+    gender  TEXT  NOT NULL, -- 7
+    hostel  TEXT  NOT NULL, -- 8
+    emergency_contact_name  TEXT NOT NULL, -- 9
+    emergency_no  TEXT NOT NULL, -- 10
+    is_active  BOOLEAN  NOT NULL DEFAULT 1 -- 11
 );
 
 CREATE TABLE IF NOT EXISTS staff (
-    staff_id  INTEGER PRIMARY KEY,
-    first_name  TEXT  NOT NULL,
-    middle_name  TEXT,
-    last_name  TEXT  NOT NULL,
-    date_of_birth  TEXT  NOT NULL,
-    join_year  INTEGER  NOT NULL,
-    blood_group  TEXT  NOT NULL,
-    gender  TEXT  NOT NULL,
-    staff_office  TEXT  NOT NULL,
-    emergency_contact_name  TEXT  NOT NULL,
-    emergency_no  TEXT  NOT NULL,
-    is_active  BOOLEAN  NOT NULL DEFAULT 1
+    staff_id  INTEGER PRIMARY KEY, -- 0
+    first_name  TEXT  NOT NULL, -- 1
+    middle_name  TEXT, -- 2
+    last_name  TEXT  NOT NULL, -- 3
+    date_of_birth  TEXT  NOT NULL, -- 4
+    join_year  INTEGER  NOT NULL, -- 5
+    blood_group  TEXT  NOT NULL, -- 6
+    gender  TEXT  NOT NULL, -- 7
+    staff_office  TEXT  NOT NULL, -- 8
+    emergency_contact_name  TEXT  NOT NULL, -- 9
+    emergency_no  TEXT  NOT NULL, -- 10
+    is_active  BOOLEAN  NOT NULL DEFAULT 1 -- 11
 );
 
 CREATE TABLE IF NOT EXISTS users(
-    user_id  INTEGER  PRIMARY KEY,
-    username  TEXT  NOT NULL  UNIQUE,
-    password_hash  TEXT  NOT NULL,
-    user_type  TEXT NOT NULL  DEFAULT  'user',
-    first_name  TEXT  NOT NULL,
-    last_name  TEXT  NOT NULL,
-    phone  TEXT  NOT NULL,
-    created_at  TEXT  NOT NULL  DEFAULT CURRENT_TIMESTAMP,
-    is_active   BOOLEAN  NOT NULL  DEFAULT 1
+    user_id  INTEGER  PRIMARY KEY, -- 0
+    username  TEXT  NOT NULL  UNIQUE, -- 1
+    password_hash  TEXT  NOT NULL, -- 2
+    user_type  TEXT NOT NULL  DEFAULT  'user', -- 3
+    first_name  TEXT  NOT NULL, -- 4
+    last_name  TEXT  NOT NULL, -- 5
+    phone  TEXT  NOT NULL, -- 6
+    created_at  TEXT  NOT NULL  DEFAULT CURRENT_TIMESTAMP, -- 7
+    is_active   BOOLEAN  NOT NULL  DEFAULT 1 -- 8
 );
 
 CREATE TABLE IF NOT EXISTS visits (
-    visit_id  INTEGER  PRIMARY KEY,
-    patient_type  TEXT  NOT NULL,
-    patient_id  INTEGER  NOT NULL,
-    user_id  INTEGER  NOT NULL,
-    term  TEXT  NOT NULL,
-    complaint  TEXT  NOT NULL,
-    symptom_category  TEXT  NOT NULL,
-    action_taken  TEXT  NOT NULL,
-    visit_datetime  TEXT NOT NULL  DEFAULT  CURRENT_TIMESTAMP
+    visit_id  INTEGER  PRIMARY KEY, -- 0
+    patient_type  TEXT  NOT NULL, -- 1
+    patient_id  INTEGER  NOT NULL, -- 2
+    user_id  INTEGER  NOT NULL, -- 3
+    term  TEXT  NOT NULL, -- 4
+    complaint  TEXT  NOT NULL, -- 5
+    symptom_category  TEXT  NOT NULL, -- 6
+    action_taken  TEXT  NOT NULL, -- 7
+    visit_datetime  TEXT NOT NULL  DEFAULT  CURRENT_TIMESTAMP -- 8
 );
