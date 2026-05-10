@@ -19,7 +19,7 @@ from PySide6.QtCore import Signal, Qt, QDate
 import datetime
 
 
-class PatientForm(QWidget):
+class StudentPatientForm(QWidget):
     def __init__(self, db_manager):
         super().__init__()
         self.db_manager = db_manager
