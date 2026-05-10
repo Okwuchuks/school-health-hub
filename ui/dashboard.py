@@ -15,6 +15,8 @@ from PySide6.QtWidgets import (
     QComboBox,
 )
 from PySide6.QtCore import Signal, Qt
+from ui.student_list import StudentList
+from ui.student_patient_form import StudentPatientForm
 
 
 class DashBoard(QWidget):
@@ -42,7 +44,10 @@ class DashBoard(QWidget):
         self.home_button = QPushButton("🏠 Home")
         self.patients_button = QPushButton("❤️‍🩹 Patients")
         self.staff_button = QPushButton("👥 Staff")
+
         self.student_button = QPushButton("🎓 Students")
+        self.student_button.clicked.connect(self._switch_to_student_list)
+
         self.visits_button = QPushButton("🎫 Visits")
         self.analytics_button = QPushButton("📊 Analytics")
 
@@ -77,6 +82,15 @@ class DashBoard(QWidget):
         self.upper_bar_layout.addWidget(self.settings_combobox, alignment=Qt.AlignmentFlag.AlignRight)
 
         self.content_area = QStackedWidget()
+
+        self.student_list = StudentList(self.db_manager, self.user_data)
+        self.student_list.add_student_button.clicked.connect(self._switch_to_add_student_form)
+
+        self.student_patient_form = StudentPatientForm(self.db_manager)
+        self.student_patient_form.back_button.clicked.connect(self._switch_to_student_list)
+
+        self.content_area.addWidget(self.student_list)
+        self.content_area.addWidget(self.student_patient_form)
 
         self.main_layout.addWidget(self.upper_bar)
         self.main_layout.addWidget(self.content_area)
@@ -113,3 +127,9 @@ class DashBoard(QWidget):
             self.analytics_button.setText("📊 Analytics")
 
         self.is_panel_expanded = not self.is_panel_expanded
+
+    def _switch_to_student_list(self):
+        self.content_area.setCurrentWidget(self.student_list)
+
+    def _switch_to_add_student_form(self):
+        self.content_area.setCurrentWidget(self.student_patient_form)
