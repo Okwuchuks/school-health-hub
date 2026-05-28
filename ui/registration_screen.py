@@ -4,16 +4,17 @@ The registration window
 Author: Ifende Daniel
 """
 
-from PySide6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
-    QPushButton,
-    QLabel,
-    QMessageBox,
-    QLineEdit,
-    QFormLayout,
-)
 from PySide6.QtCore import Signal
+from PySide6.QtWidgets import (
+    QFormLayout,
+    QLabel,
+    QLineEdit,
+    QMessageBox,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
+
 from security.auth import register_user
 
 
@@ -32,9 +33,7 @@ class RegistrationScreen(QWidget):
         input_field = QFormLayout()
 
         self.first_name_input = QLineEdit()
-        self.first_name_input.setPlaceholderText(
-            "Insert your firstname here..."
-        )
+        self.first_name_input.setPlaceholderText("Insert your firstname here...")
         self.last_name_input = QLineEdit()
         self.last_name_input.setPlaceholderText("Insert your lastname here...")
 
@@ -77,13 +76,7 @@ class RegistrationScreen(QWidget):
         password_conf = self.conf_password.text()
         phone_no = self.phone_input.text()
 
-        if (
-            not username
-            or not firstname
-            or not lastname
-            or not password
-            or not phone_no
-        ):
+        if not username or not firstname or not lastname or not password or not phone_no:
             QMessageBox.warning(self, "Error", "Please fill in all fields")
             return
 
@@ -105,7 +98,5 @@ class RegistrationScreen(QWidget):
             phone_no,
         )
 
-        QMessageBox.information(
-            self, "Success", "Account successfully created"
-        )
+        QMessageBox.information(self, "Success", "Account successfully created")
         self.registration_success.emit()

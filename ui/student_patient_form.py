@@ -4,19 +4,20 @@ The form which is used to add student patients
 Author: Ifende Daniel
 """
 
-from PySide6.QtWidgets import (
-    QWidget,
-    QHBoxLayout,
-    QFormLayout,
-    QLineEdit,
-    QComboBox,
-    QVBoxLayout,
-    QPushButton,
-    QDateEdit,
-    QMessageBox,
-)
-from PySide6.QtCore import Signal, Qt, QDate
 import datetime
+
+from PySide6.QtCore import QDate, Qt, Signal
+from PySide6.QtWidgets import (
+    QComboBox,
+    QDateEdit,
+    QFormLayout,
+    QHBoxLayout,
+    QLineEdit,
+    QMessageBox,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
 
 
 class StudentPatientForm(QWidget):
