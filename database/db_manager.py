@@ -90,3 +90,33 @@ class DatabaseManager:
     def get_student_by_name(self, student_name):
         self.cursor.execute("SELECT * FROM students WHERE first_name = ?", (student_name,))
         return self.cursor.fetchall()
+
+    def create_staff(
+        self,
+        first_name,
+        middle_name,
+        last_name,
+        date_of_birth,
+        join_year,
+        blood_group,
+        gender,
+        staff_office,
+        emergency_contact_name,
+        emergency_no,
+    ):
+        self.cursor.execute(
+            "INSERT INTO students (first_name, middle_name, last_name, date_of_birth, join_year, blood_group, gender, staff_office, emergency_contact_name, emergency_no) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                first_name,
+                middle_name,
+                last_name,
+                date_of_birth,
+                join_year,
+                blood_group,
+                gender,
+                staff_office,
+                emergency_contact_name,
+                emergency_no,
+            ),
+        )
+        self.connection.commit()
