@@ -5,16 +5,17 @@ Author: Ifende Daniel
 """
 
 from PySide6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
-    QPushButton,
-    QLabel,
-    QLineEdit,
     QComboBox,
     QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
     QTableWidget,
     QTableWidgetItem,
+    QVBoxLayout,
+    QWidget,
 )
+
 from logic.calculations import calculate_grade
 
 
