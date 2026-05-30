@@ -4,17 +4,20 @@ The landing page(The Dashboard)
 Author: Ifende Daniel
 """
 
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
-    QPushButton,
+    QComboBox,
+    QHBoxLayout,
     QLabel,
     QMessageBox,
-    QHBoxLayout,
+    QPushButton,
     QStackedWidget,
-    QComboBox,
+    QVBoxLayout,
+    QWidget,
 )
-from PySide6.QtCore import Signal, Qt
+
+from ui.staff_list import StaffList
+from ui.staff_patient_form import StaffPatientForm
 from ui.student_list import StudentList
 from ui.student_patient_form import StudentPatientForm
 
@@ -42,14 +45,24 @@ class DashBoard(QWidget):
         self.side_panel.setLayout(self.side_panel_layout)
 
         self.home_button = QPushButton("🏠 Home")
+        self.home_button.setCheckable(True)
+
         self.patients_button = QPushButton("❤️‍🩹 Patients")
+        self.patients_button.setCheckable(True)
+
         self.staff_button = QPushButton("👥 Staff")
+        self.staff_button.setCheckable(True)
+        self.staff_button.clicked.connect(self._switch_to_staff_list)
 
         self.student_button = QPushButton("🎓 Students")
+        self.student_button.setCheckable(True)
         self.student_button.clicked.connect(self._switch_to_student_list)
 
         self.visits_button = QPushButton("🎫 Visits")
+        self.visits_button.setCheckable(True)
+
         self.analytics_button = QPushButton("📊 Analytics")
+        self.analytics_button.setCheckable(True)
 
         self.side_panel_layout.addWidget(self.home_button, alignment=Qt.AlignmentFlag.AlignTop)
         self.side_panel_layout.addWidget(self.patients_button, alignment=Qt.AlignmentFlag.AlignTop)
@@ -89,8 +102,16 @@ class DashBoard(QWidget):
         self.student_patient_form = StudentPatientForm(self.db_manager)
         self.student_patient_form.back_button.clicked.connect(self._switch_to_student_list)
 
+        self.staff_list = StaffList(self.db_manager, self.user_data)
+        self.staff_list.add_staff_button.clicked.connect(self._switch_to_add_staff_form)
+
+        self.staff_patient_form = StaffPatientForm(self.db_manager)
+        self.staff_patient_form.back_button.clicked.connect(self._switch_to_staff_list)
+
         self.content_area.addWidget(self.student_list)
         self.content_area.addWidget(self.student_patient_form)
+        self.content_area.addWidget(self.staff_list)
+        self.content_area.addWidget(self.staff_patient_form)
 
         self.main_layout.addWidget(self.upper_bar)
         self.main_layout.addWidget(self.content_area)
@@ -133,3 +154,9 @@ class DashBoard(QWidget):
 
     def _switch_to_add_student_form(self):
         self.content_area.setCurrentWidget(self.student_patient_form)
+
+    def _switch_to_staff_list(self):
+        self.content_area.setCurrentWidget(self.staff_list)
+
+    def _switch_to_add_staff_form(self):
+        self.content_area.setCurrentWidget(self.staff_patient_form)
