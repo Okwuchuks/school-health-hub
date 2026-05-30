@@ -120,3 +120,9 @@ class DatabaseManager:
             ),
         )
         self.connection.commit()
+
+    def get_all_staff(self):
+        self.cursor.execute(
+            "SELECT * FROM staff",
+        )
+        return self.cursor.fetchall()
