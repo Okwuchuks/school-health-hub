@@ -105,7 +105,7 @@ class DatabaseManager:
         emergency_no,
     ):
         self.cursor.execute(
-            "INSERT INTO students (first_name, middle_name, last_name, date_of_birth, join_year, blood_group, gender, staff_office, emergency_contact_name, emergency_no) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO staff (first_name, middle_name, last_name, date_of_birth, join_year, blood_group, gender, staff_office, emergency_contact_name, emergency_no) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (
                 first_name,
                 middle_name,
