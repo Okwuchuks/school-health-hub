@@ -95,7 +95,7 @@ class StaffPatientForm(QWidget):
         button_space.setLayout(button_layout)
 
         self.add_user_button = QPushButton("Add Staff")
-        self.add_user_button.clicked.connect(self._add_student)
+        self.add_user_button.clicked.connect(self._add_staff)
 
         self.back_button = QPushButton("Back")
 

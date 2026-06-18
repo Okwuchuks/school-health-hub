@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS staff (
     staff_office  TEXT  NOT NULL, -- 8
     emergency_contact_name  TEXT  NOT NULL, -- 9
     emergency_no  TEXT  NOT NULL, -- 10
-    is_active  BOOLEAN  NOT NULL DEFAULT, 1 -- 11
+    is_active  BOOLEAN  NOT NULL DEFAULT 1, -- 11
     role TEXT NOT NULL -- 12
 );
 

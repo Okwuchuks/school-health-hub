@@ -49,7 +49,7 @@ class StaffList(QWidget):
         self.top_bar_layout.addWidget(self.delete_staff_button)
 
         self.staff_area = QWidget()
-        self._handle_student_info_area()
+        self._handle_staff_info_area()
 
         main_area_layout.addWidget(self.top_bar)
         main_area_layout.addWidget(self.staff_area)
