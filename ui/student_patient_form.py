@@ -74,7 +74,9 @@ class StudentPatientForm(QWidget):
         self.blood_group.addItems(["A-", "A+", "B-", "B+", "O-", "O+", "AB+", "AB-"])
 
         self.hostel = QComboBox()
-        self.hostel.addItem("Temporary Hostel")
+
+        hostels = self.db_manager.get_all_hostels()
+        self.hostel.addItems(hostels if hostels else ["Male Hostel", "Female Hostel"])
 
         self.emerg_cont_name = QLineEdit()
         self.emerg_cont_name.setPlaceholderText("Insert the emergency contact name here...")
