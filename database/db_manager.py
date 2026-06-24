@@ -235,3 +235,29 @@ class DatabaseManager:
             (patient_id, patient_type),
         )
         return [self._map_visit_row(row) for row in self.cursor.fetchall()]
+
+    def add_staff_role(self, role_name):
+        self.cursor.execute("INSERT OR IGNORE INTO staff_roles (role_name) VALUES (?)", (role_name,))
+        self.connection.commit()
+
+    def get_all_roles(self):
+        self.cursor.execute("SELECT role_name FROM staff_roles")
+        return [row["role_name"] for row in self.cursor.fetchall()]
+
+    def add_staff_office(self, office_name):
+        self.cursor.execute("INSERT OR IGNORE INTO staff_offices (office_name) VALUES (?)", (office_name,))
+        self.connection.commit()
+
+    def get_all_offices(self):
+        self.cursor.execute("SELECT office_name FROM staff_offices")
+        return [row["office_name"] for row in self.cursor.fetchall()]
+
+    def add_student_hostel(self, hostel_name):
+        """Inserts a new hostel config row into the lookup table."""
+        self.cursor.execute("INSERT OR IGNORE INTO student_hostels (hostel_name) VALUES (?)", (hostel_name,))
+        self.connection.commit()
+
+    def get_all_hostels(self):
+        """Fetches all available administrative hostel strings."""
+        self.cursor.execute("SELECT hostel_name FROM student_hostels")
+        return [row["hostel_name"] for row in self.cursor.fetchall()]
