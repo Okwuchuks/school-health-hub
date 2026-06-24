@@ -10,7 +10,7 @@ from cryptography.fernet import Fernet
 KEY_FILE = "secret.key"
 
 
-class DataEncrypter:
+class DataEncyrpter:
     def __init__(self, key_file_path: str = KEY_FILE):
         self.key_file_path = key_file_path
         self._cipher_suite = Fernet(self._load_or_create_key())
