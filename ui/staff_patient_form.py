@@ -56,11 +56,17 @@ class StaffPatientForm(QWidget):
         self.gender = QComboBox()
         self.gender.addItems(["Male", "Female"])
 
+        self.role = QComboBox()
+
+        roles = self.db_manager.get_all_roles()
+        self.role.addItems(roles if roles else ["Staff"])
+
         left_form_layout.addRow("First Name:", self.first_name)
         left_form_layout.addRow("Middle Name:", self.middle_name)
         left_form_layout.addRow("Last Name:", self.last_name)
         left_form_layout.addRow("Date Of Birth:", self.birthday)
         left_form_layout.addRow("Gender:", self.gender)
+        left_form_layout.addRow("Staff Role:", self.role)
 
         right_form = QWidget()
         right_form_layout = QFormLayout()
@@ -73,7 +79,9 @@ class StaffPatientForm(QWidget):
         self.blood_group.addItems(["A-", "A+", "B-", "B+", "O-", "O+", "AB+", "AB-"])
 
         self.office = QComboBox()
-        self.office.addItem("Temporary Office")
+
+        offices = self.db_manager.get_all_offices()
+        self.office.addItems(offices if offices else ["General Admin"])
 
         self.emerg_cont_name = QLineEdit()
         self.emerg_cont_name.setPlaceholderText("Insert the emergency contact name here...")
@@ -120,9 +128,7 @@ class StaffPatientForm(QWidget):
         self.emerg_cont_num.clear()
 
     def _add_staff(self):
-        """
-        [It adds a student to the database]
-        """
+        """[It adds a student to the database]"""
 
         middle_name = self.middle_name.text().strip()
 
@@ -136,6 +142,7 @@ class StaffPatientForm(QWidget):
             "Office": self.office.currentText(),
             "Emergency Contact": self.emerg_cont_num.text().strip(),
             "Emergency Contact Name": self.emerg_cont_name.text().strip(),
+            "Role": self.role.currentText(),
         }
 
         empty_fields = []
@@ -159,6 +166,7 @@ class StaffPatientForm(QWidget):
                 info["Office"],
                 info["Emergency Contact Name"],
                 info["Emergency Contact"],
+                info["Role"],
             )
             QMessageBox.information(self, "Success", "Successfully Added Staff")
 
