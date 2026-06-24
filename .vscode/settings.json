@@ -2,7 +2,9 @@
     "python-envs.defaultEnvManager": "ms-python.python:venv",
     "cSpell.words": [
         "emerg",
+        "encyrpter",
         "executescript",
+        "fernet",
         "Ifende",
         "Middlename",
         "setminimum"
