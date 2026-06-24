@@ -8,9 +8,11 @@ import sqlite3
 
 
 class DatabaseManager:
-    def __init__(self, db_path):
+    def __init__(self, db_path, encyrpter):
         self.connection = sqlite3.connect(db_path)
+        self.connection.row_factory = sqlite3.Row
         self.cursor = self.connection.cursor()
+        self.encyrpter = encyrpter
         self._initialize_db()
 
     def _initialize_db(self):
@@ -51,6 +53,26 @@ class DatabaseManager:
         self.cursor.execute("SELECT * FROM users")
         return self.cursor.fetchall()
 
+    def _map_student_row(self, row):
+        """Private helper to transform a single encrypted SQLite Row into a plaintext dict."""
+        student_data = {}
+
+        student_data["student_id"] = row["student_id"]
+        student_data["enrollment_year"] = row["enrollment_year"]
+        student_data["blood_group"] = row["blood_group"]
+        student_data["gender"] = row["gender"]
+        student_data["hostel"] = row["hostel"]
+        student_data["is_active"] = row["is_active"]
+
+        student_data["first_name"] = self.encyrpter.decrypt(row["first_name"])
+        student_data["middle_name"] = self.encyrpter.decrypt(row["middle_name"]) if row["middle_name"] else ""
+        student_data["last_name"] = self.encyrpter.decrypt(row["last_name"])
+        student_data["date_of_birth"] = self.encyrpter.decrypt(row["date_of_birth"])
+        student_data["emergency_contact_name"] = self.encyrpter.decrypt(row["emergency_contact_name"])
+        student_data["emergency_no"] = self.encyrpter.decrypt(row["emergency_no"])
+
+        return student_data
+
     def create_student(
         self,
         first_name,
@@ -64,19 +86,27 @@ class DatabaseManager:
         emergency_contact_name,
         emergency_no,
     ):
+
+        enc_first_name = self.encyrpter.encrypt(first_name)
+        enc_middle_name = self.encyrpter.encrypt(middle_name) if middle_name else ""
+        enc_last_name = self.encyrpter.encrypt(last_name)
+        enc_dob = self.encyrpter.encrypt(date_of_birth)
+        enc_emergency_name = self.encyrpter.encrypt(emergency_contact_name)
+        enc_emergency_no = self.encyrpter.encrypt(emergency_no)
+
         self.cursor.execute(
             "INSERT INTO students (first_name, middle_name, last_name, date_of_birth, enrollment_year, blood_group, gender, hostel, emergency_contact_name, emergency_no) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (
-                first_name,
-                middle_name,
-                last_name,
-                date_of_birth,
+                enc_first_name,
+                enc_middle_name,
+                enc_last_name,
+                enc_dob,
                 enrollment_year,
                 blood_group,
                 gender,
                 hostel,
-                emergency_contact_name,
-                emergency_no,
+                enc_emergency_name,
+                enc_emergency_no,
             ),
         )
         self.connection.commit()
@@ -85,11 +115,37 @@ class DatabaseManager:
         self.cursor.execute(
             "SELECT * FROM students",
         )
-        return self.cursor.fetchall()
+        return [self._map_student_row(row) for row in self.cursor.fetchall()]
 
     def get_student_by_name(self, student_name):
-        self.cursor.execute("SELECT * FROM students WHERE first_name = ?", (student_name,))
-        return self.cursor.fetchall()
+
+        enc_student_name = self.encyrpter.encrypt(student_name)
+
+        self.cursor.execute("SELECT * FROM students WHERE first_name = ?", (enc_student_name,))
+
+        return [self._map_student_row(row) for row in self.cursor.fetchall()]
+
+    def _map_staff_row(self, row):
+        """Private helper to transform a single encrypted SQLite Row into a plaintext dict."""
+
+        staff_data = {}
+
+        staff_data["staff_id"] = row["staff_id"]
+        staff_data["join_year"] = row["join_year"]
+        staff_data["blood_group"] = row["blood_group"]
+        staff_data["gender"] = row["gender"]
+        staff_data["staff_office"] = row["staff_office"]
+        staff_data["is_active"] = row["is_active"]
+        staff_data["role"] = row["role"]
+
+        staff_data["first_name"] = self.encyrpter.decrypt(row["first_name"])
+        staff_data["middle_name"] = self.encyrpter.decrypt(row["middle_name"]) if row["middle_name"] else ""
+        staff_data["last_name"] = self.encyrpter.decrypt(row["last_name"])
+        staff_data["date_of_birth"] = self.encyrpter.decrypt(row["date_of_birth"])
+        staff_data["emergency_contact_name"] = self.encyrpter.decrypt(row["emergency_contact_name"])
+        staff_data["emergency_no"] = self.encyrpter.decrypt(row["emergency_no"])
+
+        return staff_data
 
     def create_staff(
         self,
@@ -103,20 +159,30 @@ class DatabaseManager:
         staff_office,
         emergency_contact_name,
         emergency_no,
+        role,
     ):
+
+        enc_first_name = self.encyrpter.encrypt(first_name)
+        enc_middle_name = self.encyrpter.encrypt(middle_name) if middle_name else ""
+        enc_last_name = self.encyrpter.encrypt(last_name)
+        enc_dob = self.encyrpter.encrypt(date_of_birth)
+        enc_emergency_name = self.encyrpter.encrypt(emergency_contact_name)
+        enc_emergency_no = self.encyrpter.encrypt(emergency_no)
+
         self.cursor.execute(
-            "INSERT INTO staff (first_name, middle_name, last_name, date_of_birth, join_year, blood_group, gender, staff_office, emergency_contact_name, emergency_no) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO staff (first_name, middle_name, last_name, date_of_birth, join_year, blood_group, gender, staff_office, emergency_contact_name, emergency_no, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (
-                first_name,
-                middle_name,
-                last_name,
-                date_of_birth,
+                enc_first_name,
+                enc_middle_name,
+                enc_last_name,
+                enc_dob,
                 join_year,
                 blood_group,
                 gender,
                 staff_office,
-                emergency_contact_name,
-                emergency_no,
+                enc_emergency_name,
+                enc_emergency_no,
+                role,
             ),
         )
         self.connection.commit()
@@ -125,4 +191,47 @@ class DatabaseManager:
         self.cursor.execute(
             "SELECT * FROM staff",
         )
-        return self.cursor.fetchall()
+        return [self._map_staff_row(row) for row in self.cursor.fetchall()]
+
+    def _map_visit_row(self, row):
+        """Private helper to transform a single encrypted SQLite Row into a plaintext dict."""
+
+        visits_data = {}
+
+        visits_data["visit_id"] = row["visit_id"]
+        visits_data["patient_type"] = row["patient_type"]
+        visits_data["patient_id"] = row["patient_id"]
+        visits_data["user_id"] = row["user_id"]
+        visits_data["term"] = row["term"]
+        visits_data["symptom_category"] = row["symptom_category"]
+        visits_data["visit_datetime"] = row["visit_datetime"]
+
+        visits_data["complaint"] = self.encyrpter.decrypt(row["complaint"])
+        visits_data["action_taken"] = self.encyrpter.decrypt(row["action_taken"])
+
+        return visits_data
+
+    def add_visit(self, patient_type, patient_id, user_id, term, complaint, symptom_category, action_taken):
+
+        enc_complaint = self.encyrpter.encrypt(complaint)
+        enc_action_taken = self.encyrpter.encrypt(action_taken)
+
+        self.cursor.execute(
+            "INSERT into visits (patient_type, patient_id, user_id, term, complaint, symptom_category, action_taken) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (patient_type, patient_id, user_id, term, enc_complaint, symptom_category, enc_action_taken),
+        )
+        self.connection.commit()
+
+    def get_all_visits(self):
+        self.cursor.execute(
+            "SELECT * FROM visits",
+        )
+        return [self._map_visit_row(row) for row in self.cursor.fetchall()]
+
+    def get_visits_by_patient(self, patient_id, patient_type):
+        """Fetches and decrypts medical history for a specific student or staff member."""
+        self.cursor.execute(
+            "SELECT * FROM visits WHERE patient_id = ? AND patient_type = ? ORDER BY visit_datetime DESC",
+            (patient_id, patient_type),
+        )
+        return [self._map_visit_row(row) for row in self.cursor.fetchall()]
