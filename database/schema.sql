@@ -59,3 +59,18 @@ CREATE TABLE IF NOT EXISTS visits (
     action_taken  TEXT  NOT NULL, -- 7
     visit_datetime  TEXT NOT NULL  DEFAULT  CURRENT_TIMESTAMP -- 8
 );
+
+CREATE TABLE IF NOT EXISTS staff_roles (
+    role_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    role_name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS staff_offices (
+    office_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    office_name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS student_hostels (
+    hostel_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    hostel_name TEXT NOT NULL UNIQUE
+);
