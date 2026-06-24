@@ -74,7 +74,7 @@ class StudentList(QWidget):
             activity = {1: "Active", 0: "Inactive"}
 
             for row, student in enumerate(students):
-                full_name = f"{student[1]} {student[2] or ''} {student[3]}".strip()
+                full_name = f"{student['first_name']} {student['middle_name'] or ''} {student['last_name']}".strip()
 
                 activities_combo = QComboBox()
                 activities_combo.addItems(
@@ -83,13 +83,13 @@ class StudentList(QWidget):
                     else ["View Student Info"]
                 )
 
-                table.setItem(row, 0, QTableWidgetItem(str(student[0])))
+                table.setItem(row, 0, QTableWidgetItem(str(student["student_id"])))
                 table.setItem(row, 1, QTableWidgetItem(full_name))
-                table.setItem(row, 2, QTableWidgetItem(str(calculate_grade(student[5]))))
-                table.setItem(row, 3, QTableWidgetItem(str(student[4])))
-                table.setItem(row, 4, QTableWidgetItem(str(student[7])))
-                table.setItem(row, 5, QTableWidgetItem(str(student[9])))
-                table.setItem(row, 6, QTableWidgetItem(activity.get(student[11])))
+                table.setItem(row, 2, QTableWidgetItem(str(calculate_grade(student["enrollment_year"]))))
+                table.setItem(row, 3, QTableWidgetItem(str(student["date_of_birth"])))
+                table.setItem(row, 4, QTableWidgetItem(str(student["gender"])))
+                table.setItem(row, 5, QTableWidgetItem(str(student["emergency_contact_name"])))
+                table.setItem(row, 6, QTableWidgetItem(activity.get(student["is_active"])))
                 table.setCellWidget(row, 7, activities_combo)
 
             student_layout.addWidget(table)
