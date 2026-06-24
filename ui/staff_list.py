@@ -72,7 +72,7 @@ class StaffList(QWidget):
             activity = {1: "Active", 0: "Inactive"}
 
             for row, staff in enumerate(staff):
-                full_name = f"{staff[1]} {staff[2] or ''} {staff[3]}".strip()
+                full_name = f"{staff['first_name']} {staff['middle_name'] or ''} {staff['last_name']}".strip()
 
                 activities_combo = QComboBox()
                 activities_combo.addItems(
@@ -81,13 +81,13 @@ class StaffList(QWidget):
                     else ["View Staff Info"]
                 )
 
-                table.setItem(row, 0, QTableWidgetItem(str(staff[0])))
+                table.setItem(row, 0, QTableWidgetItem(str(staff["staff_id"])))
                 table.setItem(row, 1, QTableWidgetItem(full_name))
-                table.setItem(row, 2, QTableWidgetItem(str(staff[4])))
-                table.setItem(row, 3, QTableWidgetItem(str(staff[7])))
-                table.setItem(row, 4, QTableWidgetItem(str(staff[9])))
-                table.setItem(row, 5, QTableWidgetItem(activity.get(staff[11])))
-                table.setCellWidget(row, 8, activities_combo)
+                table.setItem(row, 2, QTableWidgetItem(str(staff["staff_office"])))
+                table.setItem(row, 3, QTableWidgetItem(str(staff["date_of_birth"])))
+                table.setItem(row, 4, QTableWidgetItem(str(staff["gender"])))
+                table.setItem(row, 5, QTableWidgetItem(activity.get(staff["is_active"])))
+                table.setCellWidget(row, 6, activities_combo)
 
             staff_layout.addWidget(table)
 
