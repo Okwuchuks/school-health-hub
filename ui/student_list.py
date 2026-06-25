@@ -35,11 +35,13 @@ class StudentList(QWidget):
 
         self.search_bar = QLineEdit()
         self.search_bar.setPlaceholderText("Search students by name or ID")
+        self.search_bar.textChanged.connect(self._filter_students)
 
         self.filters_drop_down = QComboBox()
+        self.filters_drop_down.addItems(["All Statuses", "Active", "Inactive"])
+        self.filters_drop_down.currentIndexChanged.connect(self._filter_students)
 
         self.add_student_button = QPushButton("➕ Add Student")
-
         self.delete_student_button = QPushButton("🗑️ Delete Student")
 
         if self.user_data[3] != "admin":
@@ -50,24 +52,42 @@ class StudentList(QWidget):
         self.top_bar_layout.addWidget(self.add_student_button)
         self.top_bar_layout.addWidget(self.delete_student_button)
 
+        # 🌟 FIX: Define the layout and sub-widgets ONCE right here.
         self.student_area = QWidget()
-        self._handle_student_info_area()
+        self.student_layout = QVBoxLayout()
+        self.student_area.setLayout(self.student_layout)
+
+        # Create the structural widgets empty at first
+        self.table = QTableWidget()
+        self.empty_label = QLabel("Currently no students")
+
+        # Add both to the layout container
+        self.student_layout.addWidget(self.table)
+        self.student_layout.addWidget(self.empty_label)
+
+        # 🌟 Run the initial database load sequence
+        self.refresh_data()
 
         main_area_layout.addWidget(self.top_bar)
         main_area_layout.addWidget(self.student_area)
 
         self.setLayout(main_area_layout)
 
-    def _handle_student_info_area(self):
-        student_layout = QVBoxLayout()
+    def refresh_data(self):
+        """Clears old data rows, re-queries database records, and handles the display state safely."""
+        # Wipe out any old cells before rebuilding rows
+        self.table.clear()
 
         students = self.db_manager.get_all_students()
 
         if students:
-            table = QTableWidget()
-            table.setRowCount(len(students))
-            table.setColumnCount(8)
-            table.setHorizontalHeaderLabels(
+            # Hide empty state alert and show data sheet
+            self.empty_label.hide()
+            self.table.show()
+
+            self.table.setRowCount(len(students))
+            self.table.setColumnCount(8)
+            self.table.setHorizontalHeaderLabels(
                 ["Student ID", "Name", "Grade", "Date of Birth", "Gender", "Parent/Guardian", "Status", "Actions"]
             )
 
@@ -83,18 +103,46 @@ class StudentList(QWidget):
                     else ["View Student Info"]
                 )
 
-                table.setItem(row, 0, QTableWidgetItem(str(student["student_id"])))
-                table.setItem(row, 1, QTableWidgetItem(full_name))
-                table.setItem(row, 2, QTableWidgetItem(str(calculate_grade(student["enrollment_year"]))))
-                table.setItem(row, 3, QTableWidgetItem(str(student["date_of_birth"])))
-                table.setItem(row, 4, QTableWidgetItem(str(student["gender"])))
-                table.setItem(row, 5, QTableWidgetItem(str(student["emergency_contact_name"])))
-                table.setItem(row, 6, QTableWidgetItem(activity.get(student["is_active"])))
-                table.setCellWidget(row, 7, activities_combo)
-
-            student_layout.addWidget(table)
-
+                self.table.setItem(row, 0, QTableWidgetItem(str(student["student_id"])))
+                self.table.setItem(row, 1, QTableWidgetItem(full_name))
+                self.table.setItem(row, 2, QTableWidgetItem(str(calculate_grade(student["enrollment_year"]))))
+                self.table.setItem(row, 3, QTableWidgetItem(str(student["date_of_birth"])))
+                self.table.setItem(row, 4, QTableWidgetItem(str(student["gender"])))
+                self.table.setItem(row, 5, QTableWidgetItem(str(student["emergency_contact_name"])))
+                self.table.setItem(row, 6, QTableWidgetItem(activity.get(student["is_active"])))
+                self.table.setCellWidget(row, 7, activities_combo)
         else:
-            student_layout.addWidget(QLabel("Currently no students"))
+            # If no student records exist, flip the visual states
+            self.table.hide()
+            self.empty_label.show()
 
-        self.student_area.setLayout(student_layout)
+        # Re-apply any filtering strings currently typed in the search bar
+        self._filter_students()
+
+    def _filter_students(self):
+        """Processes live table searches and status constraints instantly on the client side."""
+        if not hasattr(self, "table") or self.table.isHidden():
+            return
+
+        search_query = self.search_bar.text().lower().strip()
+        selected_status = self.filters_drop_down.currentText()
+
+        for row in range(self.table.rowCount()):
+            id_item = self.table.item(row, 0)
+            name_item = self.table.item(row, 1)
+            status_item = self.table.item(row, 6)
+
+            id_text = id_item.text().lower() if id_item else ""
+            name_text = name_item.text().lower() if name_item else ""
+            status_text = status_item.text() if status_item else ""
+
+            matches_search = (search_query in id_text) or (search_query in name_text)
+
+            matches_status = True
+            if selected_status == "Active":
+                matches_status = status_text == "Active"
+            elif selected_status == "Inactive":
+                matches_status = status_text == "Inactive"
+
+            should_hide = not (matches_search and matches_status)
+            self.table.setRowHidden(row, should_hide)
