@@ -125,6 +125,10 @@ class DatabaseManager:
 
         return [self._map_student_row(row) for row in self.cursor.fetchall()]
 
+    def delete_student(self, student_id):
+        self.cursor.execute("DELETE FROM students WHERE student_id = ?", (student_id,))
+        self.connection.commit()
+
     def _map_staff_row(self, row):
         """Private helper to transform a single encrypted SQLite Row into a plaintext dict."""
 
