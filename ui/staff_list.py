@@ -33,15 +33,17 @@ class StaffList(QWidget):
 
         self.search_bar = QLineEdit()
         self.search_bar.setPlaceholderText("Search staff by name or ID")
+        self.search_bar.textChanged.connect(self._filter_staff)
 
         self.filters_drop_down = QComboBox()
+        self.filters_drop_down.addItems(["All Statuses", "Active", "Inactive"])
+        self.filters_drop_down.currentIndexChanged.connect(self._filter_staff)
 
         self.add_staff_button = QPushButton("➕ Add Staff")
-
         self.delete_staff_button = QPushButton("🗑️ Delete Staff")
 
         if self.user_data[3] != "admin":
-            self.delete_staff_button.hide()
+            self.delete_student_button.hide()
 
         self.top_bar_layout.addWidget(self.search_bar)
         self.top_bar_layout.addWidget(self.filters_drop_down)
@@ -49,49 +51,87 @@ class StaffList(QWidget):
         self.top_bar_layout.addWidget(self.delete_staff_button)
 
         self.staff_area = QWidget()
-        self._handle_staff_info_area()
+        self.staff_layout = QVBoxLayout()
+        self.staff_area.setLayout(self.staff_layout)
+
+        self.table = QTableWidget()
+        self.empty_label = QLabel("Currently no staff members")
+
+        self.staff_layout.addWidget(self.table)
+        self.staff_layout.addWidget(self.empty_label)
+
+        self.refresh_data()
 
         main_area_layout.addWidget(self.top_bar)
         main_area_layout.addWidget(self.staff_area)
 
         self.setLayout(main_area_layout)
 
-    def _handle_staff_info_area(self):
-        staff_layout = QVBoxLayout()
+    def refresh_data(self):
+        """Clears old rows, re-queries database staff records, and populates the view layout safely."""
+        self.table.clear()
 
-        staff = self.db_manager.get_all_staff()
+        staff_members = self.db_manager.get_all_staff()
 
-        if staff:
-            table = QTableWidget()
-            table.setRowCount(len(staff))
-            table.setColumnCount(7)
-            table.setHorizontalHeaderLabels(
-                ["Staff ID", "Name", "Office", "Date of Birth", "Gender", "Status", "Actions"]
+        if staff_members:
+            self.empty_label.hide()
+            self.table.show()
+
+            self.table.setRowCount(len(staff_members))
+            self.table.setColumnCount(8)
+            self.table.setHorizontalHeaderLabels(
+                ["Staff ID", "Name", "Role", "Date of Birth", "Gender", "Office/Department", "Status", "Actions"]
             )
 
             activity = {1: "Active", 0: "Inactive"}
 
-            for row, staff in enumerate(staff):
+            for row, staff in enumerate(staff_members):
                 full_name = f"{staff['first_name']} {staff['middle_name'] or ''} {staff['last_name']}".strip()
 
-                activities_combo = QComboBox()
-                activities_combo.addItems(
+                actions_combo = QComboBox()
+                actions_combo.addItems(
                     ["View Staff Info", "Edit Staff", "Delete Staff"]
                     if self.user_data[3] == "admin"
                     else ["View Staff Info"]
                 )
 
-                table.setItem(row, 0, QTableWidgetItem(str(staff["staff_id"])))
-                table.setItem(row, 1, QTableWidgetItem(full_name))
-                table.setItem(row, 2, QTableWidgetItem(str(staff["staff_office"])))
-                table.setItem(row, 3, QTableWidgetItem(str(staff["date_of_birth"])))
-                table.setItem(row, 4, QTableWidgetItem(str(staff["gender"])))
-                table.setItem(row, 5, QTableWidgetItem(activity.get(staff["is_active"])))
-                table.setCellWidget(row, 6, activities_combo)
-
-            staff_layout.addWidget(table)
-
+                self.table.setItem(row, 0, QTableWidgetItem(str(staff["staff_id"])))
+                self.table.setItem(row, 1, QTableWidgetItem(full_name))
+                self.table.setItem(row, 2, QTableWidgetItem(str(staff["role"])))
+                self.table.setItem(row, 3, QTableWidgetItem(str(staff["date_of_birth"])))
+                self.table.setItem(row, 4, QTableWidgetItem(str(staff["gender"])))
+                self.table.setItem(row, 5, QTableWidgetItem(str(staff["staff_office"])))
+                self.table.setItem(row, 6, QTableWidgetItem(activity.get(staff["is_active"])))
+                self.table.setCellWidget(row, 7, actions_combo)
         else:
-            staff_layout.addWidget(QLabel("Currently no staff"))
+            self.table.hide()
+            self.empty_label.show()
 
-        self.staff_area.setLayout(staff_layout)
+        self._filter_staff()
+
+    def _filter_staff(self):
+        """Processes instant searches and active filters on the staff grid layout."""
+        if not hasattr(self, "table") or self.table.isHidden():
+            return
+
+        search_query = self.search_bar.text().lower().strip()
+        selected_status = self.filters_drop_down.currentText()
+
+        for row in range(self.table.rowCount()):
+            id_item = self.table.item(row, 0)
+            name_item = self.table.item(row, 1)
+            status_item = self.table.item(row, 6)
+
+            id_text = id_item.text().lower() if id_item else ""
+            name_text = name_item.text().lower() if name_item else ""
+            status_text = status_item.text() if status_item else ""
+
+            matches_search = (search_query in id_text) or (search_query in name_text)
+
+            matches_status = True
+            if selected_status == "Active":
+                matches_status = status_text == "Active"
+            elif selected_status == "Inactive":
+                matches_status = status_text == "Inactive"
+
+            self.table.setRowHidden(row, not (matches_search and matches_status))
