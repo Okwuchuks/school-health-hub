@@ -101,12 +101,14 @@ class DashBoard(QWidget):
 
         self.student_patient_form = StudentPatientForm(self.db_manager)
         self.student_patient_form.back_button.clicked.connect(self._switch_to_student_list)
+        self.student_patient_form.student_added.connect(self.student_list.refresh_data)
 
         self.staff_list = StaffList(self.db_manager, self.user_data)
         self.staff_list.add_staff_button.clicked.connect(self._switch_to_add_staff_form)
 
         self.staff_patient_form = StaffPatientForm(self.db_manager)
         self.staff_patient_form.back_button.clicked.connect(self._switch_to_staff_list)
+        self.staff_patient_form.staff_added.connect(self.staff_list.refresh_data)
 
         self.content_area.addWidget(self.student_list)
         self.content_area.addWidget(self.student_patient_form)
