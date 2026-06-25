@@ -9,13 +9,15 @@ from ui.login_screen import LoginScreen
 from ui.registration_screen import RegistrationScreen
 from ui.dashboard import DashBoard
 from database.db_manager import DatabaseManager
+from security.encryption import DataEncyrpter
 from security.auth import is_first_run
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.db_manager = DatabaseManager("school_health_record.db")
+        self.encyrpter = DataEncyrpter()
+        self.db_manager = DatabaseManager("school_health_record.db", self.encyrpter)
         self.is_first_run = is_first_run(self.db_manager)
         self._init_ui()
 
