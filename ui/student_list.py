@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
     QTableWidgetItem,
     QVBoxLayout,
     QWidget,
+    QMessageBox,
 )
 
 from logic.calculations import calculate_grade
@@ -42,7 +43,9 @@ class StudentList(QWidget):
         self.filters_drop_down.currentIndexChanged.connect(self._filter_students)
 
         self.add_student_button = QPushButton("➕ Add Student")
+
         self.delete_student_button = QPushButton("🗑️ Delete Student")
+        self.delete_student_button.clicked.connect(self._delete_selected_student)
 
         if self.user_data[3] != "admin":
             self.delete_student_button.hide()
@@ -52,20 +55,16 @@ class StudentList(QWidget):
         self.top_bar_layout.addWidget(self.add_student_button)
         self.top_bar_layout.addWidget(self.delete_student_button)
 
-        # 🌟 FIX: Define the layout and sub-widgets ONCE right here.
         self.student_area = QWidget()
         self.student_layout = QVBoxLayout()
         self.student_area.setLayout(self.student_layout)
 
-        # Create the structural widgets empty at first
         self.table = QTableWidget()
         self.empty_label = QLabel("Currently no students")
 
-        # Add both to the layout container
         self.student_layout.addWidget(self.table)
         self.student_layout.addWidget(self.empty_label)
 
-        # 🌟 Run the initial database load sequence
         self.refresh_data()
 
         main_area_layout.addWidget(self.top_bar)
@@ -75,13 +74,11 @@ class StudentList(QWidget):
 
     def refresh_data(self):
         """Clears old data rows, re-queries database records, and handles the display state safely."""
-        # Wipe out any old cells before rebuilding rows
         self.table.clear()
 
         students = self.db_manager.get_all_students()
 
         if students:
-            # Hide empty state alert and show data sheet
             self.empty_label.hide()
             self.table.show()
 
@@ -98,7 +95,7 @@ class StudentList(QWidget):
 
                 activities_combo = QComboBox()
                 activities_combo.addItems(
-                    ["View Student Info", "Edit Student", "Delete Student"]
+                    ["Select Action...", "View Student Info", "Edit Student", "Delete Student"]
                     if self.user_data[3] == "admin"
                     else ["View Student Info"]
                 )
@@ -112,11 +109,9 @@ class StudentList(QWidget):
                 self.table.setItem(row, 6, QTableWidgetItem(activity.get(student["is_active"])))
                 self.table.setCellWidget(row, 7, activities_combo)
         else:
-            # If no student records exist, flip the visual states
             self.table.hide()
             self.empty_label.show()
 
-        # Re-apply any filtering strings currently typed in the search bar
         self._filter_students()
 
     def _filter_students(self):
@@ -146,3 +141,25 @@ class StudentList(QWidget):
 
             should_hide = not (matches_search and matches_status)
             self.table.setRowHidden(row, should_hide)
+
+    def _delete_selected_student(self):
+        selected_row = self.table.currentRow()
+
+        if selected_row == -1:
+            QMessageBox.information(self, "No Selected Student", "Please select a student to continue...")
+            return
+
+        student_id = self.table.item(selected_row, 0).text()
+        student_name = self.table.item(selected_row, 1).text()
+
+        reply = QMessageBox.question(
+            self,
+            "Confirm Deletion",
+            f"Are you sure you want to completely remove Student: {student_name} ID: {student_id}?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No,
+        )
+
+        if reply == QMessageBox.Yes:
+            self.db_manager.delete_student(student_id)
+            self.refresh_data()
