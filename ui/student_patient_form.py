@@ -6,7 +6,7 @@ Author: Ifende Daniel
 
 import datetime
 
-from PySide6.QtCore import QDate, Qt, Signal
+from PySide6.QtCore import QDate, Signal
 from PySide6.QtWidgets import (
     QComboBox,
     QDateEdit,
@@ -21,6 +21,8 @@ from PySide6.QtWidgets import (
 
 
 class StudentPatientForm(QWidget):
+    student_added = Signal()
+
     def __init__(self, db_manager):
         super().__init__()
         self.db_manager = db_manager
@@ -165,4 +167,5 @@ class StudentPatientForm(QWidget):
             )
             QMessageBox.information(self, "Success", "Successfully Added Student")
 
+            self.student_added.emit()
             self._clear_input_fields()

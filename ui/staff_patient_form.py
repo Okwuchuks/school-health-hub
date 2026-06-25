@@ -6,7 +6,7 @@ Author: Ifende Daniel
 
 import datetime
 
-from PySide6.QtCore import QDate
+from PySide6.QtCore import QDate, Signal
 from PySide6.QtWidgets import (
     QComboBox,
     QDateEdit,
@@ -21,6 +21,8 @@ from PySide6.QtWidgets import (
 
 
 class StaffPatientForm(QWidget):
+    staff_added = Signal()
+
     def __init__(self, db_manager):
         super().__init__()
         self.db_manager = db_manager
@@ -91,7 +93,7 @@ class StaffPatientForm(QWidget):
 
         right_form_layout.addRow("Enrollment Year:", self.join_year)
         right_form_layout.addRow("Blood Group:", self.blood_group)
-        right_form_layout.addRow("Hostel:", self.office)
+        right_form_layout.addRow("Office:", self.office)
         right_form_layout.addRow("Emergency Contact:", self.emerg_cont_num)
         right_form_layout.addRow("Emergency Contact Name:", self.emerg_cont_name)
 
@@ -170,4 +172,5 @@ class StaffPatientForm(QWidget):
             )
             QMessageBox.information(self, "Success", "Successfully Added Staff")
 
+            self.staff_added.emit()
             self._clear_input_fields()
